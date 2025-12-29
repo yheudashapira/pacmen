@@ -1,23 +1,21 @@
 package view.main;
 
-
-import controler.KeyHandler;
-import modul.entity.Entity;
+import model.GameManger;
+import model.entity.Entity;
 
 import java.awt.*;
 
-public class DrawCharacter extends Character {
+public class DrawCharacter  {
 
-
+    public int x, y;
     Entity entity;
     GamePanel gp;
-    KeyHandler keyH;
+
     LoudImages images;
 
 
-    public DrawCharacter(GamePanel gp, KeyHandler keyH) {
+    public DrawCharacter(GamePanel gp) {
         this.gp = gp;
-        this.keyH = keyH;
         this.images = new LoudImages();
 
     }
@@ -55,6 +53,11 @@ public class DrawCharacter extends Character {
 
 
         g2.drawImage(images.getImage(entity.getImageNameForCurrentState(SpriteCounter.num)), x, y, gp.tileSize, gp.tileSize, null);
+
+    }
+
+    public void draw(Graphics2D g2, GameManger gameManger){
+        g2.drawImage(images.getImage(gameManger.getFruit().getName()),gameManger.getFruit().getX() * gp.tileSize, gameManger.getFruit().getY()* gp.tileSize,gp.tileSize, gp.tileSize, null);
     }
 
 }

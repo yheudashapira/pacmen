@@ -1,4 +1,4 @@
-package modul;
+package model;
 
 import controler.game_Enums.Direction;
 import controler.game_Enums.GameState;
@@ -14,13 +14,8 @@ public class MainMenu {
     String[] menu = {"התחל משחק", "התחל משחק עם הקלטה", "הפעל משחקים שמורים", "הוראות", "יציאה"};
 
     Direction direction;
-//    List<StateEnum> menu = new ArrayList<>();
-    int num = 0;
-//    StateEnum stateEnum;
 
-//    void addToList(){
-//        menu.add(StateEnum.READY);
-//    }
+    int num = 0;
 
     public int getNum() {
         return num;
@@ -64,18 +59,12 @@ public class MainMenu {
         return GameState.MAIN_MENU;
     }
 
-//    public StateEnum getStateEnum() {
-//        return stateEnum;
-//    }
+
 
 
     public String[] getMenu() {
         return menu;
     }
 
-    public void update(){
-//        if (direction != null) {
-            select();
-//        }
-    }
+
 }

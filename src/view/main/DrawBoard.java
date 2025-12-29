@@ -1,7 +1,8 @@
 package view.main;
 
-import modul.entity.Pacman;
-import modul.game_board.GameBoard;
+import model.GameManger;
+//import model.entity.Pacman;
+import model.game_board.GameBoard;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -11,13 +12,15 @@ import java.util.Objects;
 
 public class DrawBoard {
 
-    BufferedImage wall, pellet, powerPellet, empty, ghostsDoor;
+    BufferedImage wall, pellet, powerPellet, empty, ghostsDoor, pacmansImage;
 
     GamePanel gp;
     GamesStrings gamesStrings;
+    GameManger gameManger;
 
 
-    public DrawBoard(GamePanel gp){
+    public DrawBoard(GamePanel gp, GameManger gameManger){
+        this.gameManger = gameManger;
         this.gp = gp;
         this.gamesStrings = new GamesStrings(gp);
 
@@ -33,17 +36,17 @@ public class DrawBoard {
             powerPellet = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("..\\res/general/bonus.png")));
             empty = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("..\\res/general/empty.png")));
             ghostsDoor = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("..\\res/general/ghosts_door.png")));
+            pacmansImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("..\\res/packman/packman_right_1.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void loudMap(Graphics2D g2, GameBoard.tileType[][] gameBoard, Pacman pacman){
+    public void loudMap(Graphics2D g2, GameBoard.tileType[][] gameBoard){
         int y = 0;
+        int x = 0;
         for (int row = 0; row < gameBoard.length; row++) {
-            int x = 0;
+            x = 0;
             for (int col = 0; col < gameBoard[row].length; col++) {
-                // הדפסת תו ראשוני שמייצג את סוג האריח
-                // (תוכלו לשפר את זה לגרפיקה בפועל)
                 switch (gameBoard[row][col]) {
                     case WALL:
                         g2.drawImage(wall, x, y, gp.tileSize, gp.tileSize, null);// קיר
@@ -69,7 +72,10 @@ public class DrawBoard {
             }
             y += gp.tileSize;
         }
-//        gamesStrings.printBaseInformation(g2, .getScore());
-//        gamesStrings.printGameOver(g2);
+
+        for (int i = 0; i < gameManger.getPacmansLife(); i++) {
+            g2.drawImage(pacmansImage, gp.tileSize*i, y - gp.tileSize, gp.tileSize, gp.tileSize, null);
+        }
+        gamesStrings.drawString(gameManger, g2);
     }
 }

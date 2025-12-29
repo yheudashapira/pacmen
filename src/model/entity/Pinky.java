@@ -1,6 +1,6 @@
-package modul.entity;
+package model.entity;
 
-import modul.game_board.GameBoard;
+import model.game_board.GameBoard;
 
 public class Pinky extends Ghost {
 

@@ -1,19 +1,17 @@
-package modul.game_board;
+package model.game_board;
 
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class GameBoard {
     tileType[][] gameBoard;
-    int write = 28;
-    int high = 34;
+    int write;
+    int high;
     int countPellets;
-    String directory = "C:\\Users\\User\\code\\pacmen\\src\\modul\\game_board\\boards_files\\";
+    String directory = "C:\\Users\\User\\code\\pacmen\\src\\model\\game_board\\boards_files\\";
     String filePath;
 
     public GameBoard(){
@@ -48,10 +46,24 @@ public class GameBoard {
 
     }
 
+    void checkDimensions(String filePath){
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int high = 0;
+            while ((line = reader.readLine()) != null) {
+                int lenLine = line.split("\\s+").length;
+                if (lenLine > write) write = lenLine;
+                high++;
+            }
+            this.high = high;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     void  bordFileReader(String filePath){
-         gameBoard = new tileType[34][28];
-
-
+        checkDimensions(filePath);
+        gameBoard = new tileType[high][write];
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))){
             String line;
             int j = 0;
@@ -67,6 +79,7 @@ public class GameBoard {
                             break;
                         case "PELLET":
                             gameBoard[j][i] = tileType.PELLET;
+                            countPellets++;
                             break;
                         case "BIG_PELLET":
                             gameBoard[j][i] = tileType.POWER_PELLET;

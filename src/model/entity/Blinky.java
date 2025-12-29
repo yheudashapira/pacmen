@@ -1,7 +1,7 @@
-package modul.entity;
+package model.entity;
 
 import controler.game_Enums.Direction;
-import modul.game_board.GameBoard;
+import model.game_board.GameBoard;
 
 public class Blinky extends Ghost {
 

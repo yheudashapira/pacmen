@@ -1,4 +1,4 @@
-package modul;
+package model;
 
 import controler.game_Enums.Direction;
 
@@ -7,12 +7,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameRecording {
-    List <String> recordList = new CopyOnWriteArrayList<>();
+    List <String> recordList = new LinkedList<>();
 
     public void record(Direction event ,long time){
         recordList.add(time + "," + event.name());

@@ -1,6 +1,7 @@
-package modul;
+package model;
 
 
+import javax.swing.JOptionPane;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,21 +18,22 @@ import java.util.List;
 
 public class HighScores {
 
-    List<String> scoresArr = new ArrayList<>(1);
+    List<String> scoresArr = new ArrayList<>();
     String folderName = "data_base";
     String fileName = "high_scores.txt";
 
     Path filePath = Paths.get(folderName, fileName);
 
 
-    public void raedFile() {
+    public void readFile() {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                scoresArr.add(line);
-
+                if (!line.isEmpty()) {
+                    scoresArr.add(line);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,13 +43,13 @@ public class HighScores {
     }
 
     public void collocateScore(int score) {
-        raedFile();
+        readFile();
         if (scoresArr.isEmpty()) {
             scoresArr.add(playerName(1) + score);
             writeToTheFile();
             return;
         }
-        if (scoresArr.size() == 1) {
+        else if (scoresArr.size() == 1) {
             if (score > Integer.parseInt(scoresArr.getFirst().split(",")[2])) {
                 scoresArr.addFirst(playerName(1) + score);
             } else {
@@ -83,7 +85,8 @@ public class HighScores {
     }
 
     public String playerName(int high) {
-        String name = "";
+
+        String name = JOptionPane.showInputDialog("You came to " + high + "place \nPlease enter your name:");;
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy");
         String formattedDateTime = currentDateTime.format(formatter);

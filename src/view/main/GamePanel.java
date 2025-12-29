@@ -1,10 +1,10 @@
 package view.main;
 
-import controler.KeyHandler;
-import modul.GameManger;
-import modul.entity.Entity;
-import modul.entity.Pacman;
-import modul.game_board.GameBoard;
+import controler.KeyBoardsEvent;
+import model.GameManger;
+import model.entity.Entity;
+import model.entity.Pacman;
+import model.game_board.GameBoard;
 
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ public class GamePanel extends JPanel {
     JFrame window = new JFrame();
 
 
-    void createWindow(KeyHandler keyH) {
+    void createWindow(KeyBoardsEvent keyH) {
 
         this.setPreferredSize(new Dimension(screenWrite, screenHigte));
         this.setBackground(Color.black);
@@ -38,22 +38,26 @@ public class GamePanel extends JPanel {
         window.setVisible(true);
     }
 
-
+    GameManger gameManger;
     DrawCharacter drawCharacter;
     DrawBoard drawBoard;
-    GameBoard.tileType[][] gameBoard;
+    GameBoard gameBoard;
+    DrawMenu drawMenu;
     List<Entity> entitys;
+
 
     final int screenWrite;
     final int screenHigte;
 
-    public GamePanel(GameManger gameManger, KeyHandler keyH) {
-        this.gameBoard = gameManger.gameBoard.getGameBoard();
+    public GamePanel(GameManger gameManger, KeyBoardsEvent keyH) {
+        this.gameManger = gameManger;
+        this.gameBoard = gameManger.gameBoard;
         this.entitys = gameManger.entities;
-        this.drawBoard = new DrawBoard(this);
-        this.drawCharacter = new DrawCharacter(this, keyH);
-        this.screenWrite = tileSize * this.gameBoard[0].length;
-        this.screenHigte = tileSize * this.gameBoard.length;
+        this.drawBoard = new DrawBoard(this, gameManger);
+        this.drawCharacter = new DrawCharacter(this);
+        this.drawMenu = new DrawMenu(this, gameManger);
+        this.screenWrite = tileSize * this.gameBoard.getWrite();
+        this.screenHigte = tileSize * this.gameBoard.getHigh();
 
         createWindow(keyH);
     }
@@ -64,13 +68,25 @@ public class GamePanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
 
         super.paintComponent(g);
-        drawBoard.loudMap(g2, this.gameBoard, (Pacman) entitys.get(0));
 
-        for (Entity entity : entitys) {
-            drawCharacter.update(entity);
-            drawCharacter.draw(g2);
+        switch (gameManger.getGameState()) {
+            case MAIN_MENU:
+                drawMenu.printMenu(g2);
+                break;
+            default:
+
+                drawBoard.loudMap(g2, this.gameBoard.getGameBoard());
+
+                if (gameManger.isTheirFruit()) {
+                    drawCharacter.draw(g2, gameManger);
+                    System.out.println(gameManger.getFruit().getName() + "rrrrrrrrrrrrrrrrrrrrrrr");
+                }
+                for (Entity entity : entitys) {
+                    drawCharacter.update(entity);
+                    drawCharacter.draw(g2);
+                }
+
+                g2.dispose();
         }
-
-        g2.dispose();
     }
 }

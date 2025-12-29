@@ -1,13 +1,13 @@
-package modul.entity;
+package model.entity;
 
 
 import controler.game_Enums.Direction;
 import controler.game_Enums.StatePlayers;
-import modul.game_board.GameBoard;
+import model.game_board.GameBoard;
 
 public class Pacman extends Entity {
 
-    int life = 3;
+//    int life = 3;
 
     final int startX = 14;
     final int startY = 25;
@@ -15,7 +15,7 @@ public class Pacman extends Entity {
     public Pacman(GameBoard gameBoard) {
         super(gameBoard);
         name = Names.PACMAN;
-        speed = 0.12;
+        speed = 0.3;
         direction = Direction.FULL;
 
     }
@@ -48,12 +48,12 @@ public class Pacman extends Entity {
         direction = Direction.FULL;
     }
 
-    public void loss() {
-        if (life > 0) {
-            life--;
-//            direction = Direction.LOSS;
-        }
-    }
+//    public void loss() {
+//        if (life > 0) {
+//            life--;
+////            direction = Direction.LOSS;
+//        }
+//    }
     public boolean checkCollisions(Ghost ghost) {
 
         if (Math.abs(ghost.getX() - getX()) < .9 && Math.abs(ghost.getY() - getY()) < .9) {

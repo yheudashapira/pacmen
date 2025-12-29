@@ -1,4 +1,8 @@
 package controler;
 
-public interface KeyHandker {
+import controler.game_Enums.Direction;
+
+public interface KeyHandler {
+    public Direction newEvent();
+
 }

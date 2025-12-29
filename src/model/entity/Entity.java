@@ -1,8 +1,8 @@
-package modul.entity;
+package model.entity;
 
 import controler.game_Enums.Direction;
 import controler.game_Enums.StatePlayers;
-import modul.game_board.GameBoard;
+import model.game_board.GameBoard;
 
 
 public abstract class Entity {
@@ -13,15 +13,13 @@ public abstract class Entity {
     StatePlayers lastState = StatePlayers.START;;
 
     double x, y, lastX, lastY, nextX, nextY;
-    public double speed = 0.06;
+    double speed;
     int startY;
     int startX;
 
 
 
-    public void addSpeed() {
-        this.speed += 0.01;
-    }
+
 
     GameBoard gameBoard;
 

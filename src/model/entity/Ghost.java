@@ -1,8 +1,8 @@
-package modul.entity;
+package model.entity;
 
 import controler.game_Enums.Direction;
 import controler.game_Enums.StatePlayers;
-import modul.game_board.GameBoard;
+import model.game_board.GameBoard;
 
 
 
@@ -11,10 +11,14 @@ public abstract class Ghost extends Entity {
     Pacman pacman;
     double targetX, targetY;
 
+    double lastSpeed;
+
 
     public Ghost(GameBoard gameBoard, Pacman pacman) {
         super(gameBoard);
         this.pacman = pacman;
+        speed = 0.12;
+        lastSpeed = speed;
         direction = Direction.UP;
     }
     @Override
@@ -69,6 +73,7 @@ public abstract class Ghost extends Entity {
 
     void startState(){
 //        direction = Direction.UP;
+        previousSpeed();
         if (!checkPath(direction)){
             direction = Direction.oppositeDirection(direction);
         }
@@ -87,12 +92,12 @@ public abstract class Ghost extends Entity {
     public void eatenState(){
         targetX = 13;
         targetY = 13;
-        speed = 0.2;
+        speed = 0.5;
         checkPossibleDirections();
         if (Math.abs(y - targetY) <0.5 && Math.abs(x - targetX) <0.5){
             setFirstLocation();
             setState(StatePlayers.GET_OUT);
-            speed = 0.06;
+            speed = lastSpeed;
         }
     }
 
@@ -129,6 +134,7 @@ public abstract class Ghost extends Entity {
 
 
     public void chooseMode() {
+
         switch (state) {
             case SCARED:
                 scaredState();
@@ -179,6 +185,19 @@ public abstract class Ghost extends Entity {
     public void update() {
         chooseMode();
         super.move();
+    }
+
+    public void addSpeed() {
+        this.speed += 0.04;
+        this.lastSpeed = speed;
+    }
+
+    public void reduceSpeed(double speed){
+        this.speed = speed;
+    }
+
+    public void previousSpeed(){
+        speed = lastSpeed;
     }
 
     public double getTargetX() {
