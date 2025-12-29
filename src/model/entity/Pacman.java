@@ -1,6 +1,8 @@
 package modul.entity;
 
 
+import controler.game_Enums.Direction;
+import controler.game_Enums.StatePlayers;
 import modul.game_board.GameBoard;
 
 public class Pacman extends Entity {
@@ -12,8 +14,8 @@ public class Pacman extends Entity {
 
     public Pacman(GameBoard gameBoard) {
         super(gameBoard);
-        name = Name.PACMAN;
-        speed = 0.10;
+        name = Names.PACMAN;
+        speed = 0.12;
         direction = Direction.FULL;
 
     }
@@ -25,7 +27,7 @@ public class Pacman extends Entity {
     }
 
     @Override
-    public void setState(StateEnum state) {
+    public void setState(StatePlayers state) {
 
     }
 //    @Override
@@ -52,10 +54,20 @@ public class Pacman extends Entity {
 //            direction = Direction.LOSS;
         }
     }
+    public boolean checkCollisions(Ghost ghost) {
+
+        if (Math.abs(ghost.getX() - getX()) < .9 && Math.abs(ghost.getY() - getY()) < .9) {
+            System.out.println(true);
+            return true;
+
+        }
+        System.out.println(false);
+        return false;
+    }
 
 
     public String getImageNameForCurrentState(int animationFrame) {
-        if (state == StateEnum.EAT) {
+        if (state == StatePlayers.EAT) {
             return "packman_loss";
         }
         if (animationFrame == 3) {

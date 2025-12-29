@@ -1,8 +1,10 @@
 package modul.entity;
 
+import controler.game_Enums.Direction;
+import controler.game_Enums.StatePlayers;
 import modul.game_board.GameBoard;
 
-import java.util.Random;
+
 
 public abstract class Ghost extends Entity {
 
@@ -16,24 +18,23 @@ public abstract class Ghost extends Entity {
         direction = Direction.UP;
     }
     @Override
-    public void setState(StateEnum state) {
-        this.state = state;
-    }
-
-    public abstract void updateTarget();
-
-    public void eatenTarget(){
-        targetX = 13;
-        targetY = 13;
-        if (x == targetX && y == targetY){
-            setFirstLocation();
+    public void setState(StatePlayers state) {
+        if (this.state != state) {
+            this.lastState = this.state;
         }
+            this.state = state;
     }
+
+    public abstract void chaseTarget();
+
+    public abstract void scatterTarget();
+
 
 
     void checkPossibleDirections() {
+
         Direction tempDir = null;
-        if (Math.abs(lastX - x) >= 1 || Math.abs(lastY - y) >= 1) {
+        if (x % 1 == 0 && y % 1 == 0) {
             double slant = 100000000;
             for (Direction dir : Direction.values()) {
                 if (checkPath(dir) && Direction.oppositeDirection(direction) != dir) {
@@ -55,87 +56,100 @@ public abstract class Ghost extends Entity {
                     }
                 }
             }
-            direction = tempDir;
-            lastX = x;
-            lastY = y;
+            if (tempDir == null) {
+                direction = Direction.oppositeDirection(direction);
+            } else {
+                direction = tempDir;
+                lastX = x;
+                lastY = y;
+            }
+
         }
     }
 
-    void startDirection(){
+    void startState(){
 //        direction = Direction.UP;
         if (!checkPath(direction)){
             direction = Direction.oppositeDirection(direction);
         }
     }
 
-    void getOutDirection(){
-        targetX = 13;
-        targetY = 13;
+    void getOutState(){
+
+            targetX = 13;
+            targetY = 13;
+            checkPossibleDirections();
+        if (Math.abs(y - targetY) <0.5 && Math.abs(x - targetX) <0.5){
+            setState(StatePlayers.SCATTER);
+        }
     }
 
     public void eatenState(){
         targetX = 13;
         targetY = 13;
-        speed *= 1;
-        if (y == targetY && x == targetX){
+        speed = 0.2;
+        checkPossibleDirections();
+        if (Math.abs(y - targetY) <0.5 && Math.abs(x - targetX) <0.5){
             setFirstLocation();
-            state = StateEnum.GET_OUT;
-            speed /= 1;
+            setState(StatePlayers.GET_OUT);
+            speed = 0.06;
         }
     }
 
     void randomDirections() {
         Direction tempDir = null;
-        Random random = new Random();
-        if (Math.abs(lastX - x) >= 1 || Math.abs(lastY - y) >= 1) {
-            for (int i = 0; i < 10; i++) {
-                int num = random.nextInt(1, 4);
-                switch (num) {
-                    case 1:
-                        tempDir = Direction.UP;
-                        break;
-                    case 2:
-                        tempDir = Direction.DOWN;
-                        break;
-                    case 3:
-                        tempDir = Direction.RIGHT;
-                        break;
-                    case 4:
-                        tempDir = Direction.LEFT;
-                        break;
-                }
-                if (checkPath(tempDir) && Direction.oppositeDirection(direction) != tempDir){
-                    direction = tempDir;
-                    return;
-                }
+        for (Direction dir : Direction.values()) {
+            if (checkPath(dir) && Direction.oppositeDirection(direction) != dir) {
+                tempDir = dir;
+                break;
+
             }
+        }
+        if (tempDir == null){
+            direction = Direction.oppositeDirection(direction);
+        } else {
+            direction = tempDir;
         }
     }
     void scaredState(){
-        randomDirections();
+        if (lastState != StatePlayers.START ) {
+            randomDirections();
+        } else {
+            startState();
+        }
     }
 
     void scatterState(){
-        updateTarget();
+        scatterTarget();
+        checkPossibleDirections();
         if (Math.abs(y - targetY) < 3 && Math.abs(x - targetX) < 3){
-            state = StateEnum.CHASE;
+            state = StatePlayers.CHASE;
         }
     }
 
-    @Override
-    public void move() {
-        if (state == StateEnum.SCARED){
-            randomDirections();
-        } else if (state == StateEnum.EAT){
 
-        } else if (state == StateEnum.START) {
-            startDirection();
-        }else if (state == StateEnum.GET_OUT){
-            getOutDirection();
-        } else {
-            checkPossibleDirections();
+    public void chooseMode() {
+        switch (state) {
+            case SCARED:
+                scaredState();
+                break;
+            case EAT:
+                eatenState();
+                break;
+            case START:
+                startState();
+                break;
+            case GET_OUT:
+                getOutState();
+                break;
+            case SCATTER:
+                scatterState();
+                break;
+            case CHASE:
+                chaseTarget();
+                checkPossibleDirections();
+                break;
         }
-        super.move();
     }
 
     public String getImageNameForCurrentState(int animationFrame) {
@@ -163,9 +177,8 @@ public abstract class Ghost extends Entity {
 
     @Override
     public void update() {
-        updateTarget();
-        checkPossibleDirections();
-        move();
+        chooseMode();
+        super.move();
     }
 
     public double getTargetX() {
